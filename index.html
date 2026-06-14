@@ -140,9 +140,64 @@
   /* Hero Section */
   .hero {
     min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
+    display: flex; align-items: center;
     padding-top: 80px; position: relative;
   }
+  .hero-inner {
+    display: flex; align-items: center; justify-content: space-between; gap: 4rem; width: 100%;
+  }
+  .hero-text {
+    flex: 1;
+  }
+  .hero-visual {
+    flex: 0 0 380px;
+    display: flex; justify-content: center; position: relative;
+    opacity: 0; transform: translateX(40px);
+    animation: fadeLeft 1s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.6s;
+  }
+  
+  /* Hero Photo Morphing Effect */
+  .image-wrapper {
+    position: relative;
+    width: 380px; height: 380px;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation: morph 8s ease-in-out infinite;
+    border: 1px solid var(--border-hover);
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+  }
+  @keyframes morph {
+    0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+    50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+    75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+    100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  }
+  .profile-img {
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: inherit;
+    transition: transform 0.5s ease, filter 0.5s ease;
+    filter: grayscale(10%) contrast(105%);
+  }
+  .image-wrapper:hover .profile-img {
+    transform: scale(1.05);
+    filter: grayscale(0%) contrast(100%);
+  }
+  .image-glow {
+    position: absolute; top: 50%; left: 50%; width: 100%; height: 100%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, var(--accent-1) 0%, transparent 60%);
+    opacity: 0.3; filter: blur(40px); z-index: -1;
+    animation: pulseGlow 4s alternate infinite;
+  }
+  @keyframes pulseGlow {
+    to { transform: translate(-50%, -50%) scale(1.1); opacity: 0.5; }
+  }
+  @keyframes fadeLeft {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
   .eyebrow {
     font-family: 'JetBrains Mono', monospace;
     color: var(--accent-1); font-size: 0.9rem;
@@ -156,10 +211,10 @@
     content: ''; width: 40px; height: 1px; background: var(--accent-1);
     transition: width 0.5s ease;
   }
-  .hero:hover .eyebrow::before { width: 60px; }
+  .hero-text:hover .eyebrow::before { width: 60px; }
 
   .title {
-    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-size: clamp(3rem, 7vw, 5rem);
     font-weight: 800; line-height: 1.1; margin-bottom: 1.25rem;
     opacity: 0; transform: translateY(20px);
     animation: fadeUp 1s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.4s;
@@ -177,14 +232,14 @@
   }
 
   .subtitle {
-    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
     color: var(--text-muted); font-weight: 400; margin-bottom: 2rem;
     opacity: 0; transform: translateY(20px);
     animation: fadeUp 1s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.6s;
   }
   .subtitle span { color: var(--text-main); font-weight: 600; }
   .description {
-    max-width: 600px; font-size: 1.1rem; color: var(--text-muted);
+    max-width: 550px; font-size: 1.1rem; color: var(--text-muted);
     margin-bottom: 3rem; line-height: 1.8;
     opacity: 0; transform: translateY(20px);
     animation: fadeUp 1s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.8s;
@@ -216,7 +271,6 @@
     border-radius: 100px;
     color: var(--text-main); text-decoration: none; font-size: 0.9rem;
     backdrop-filter: blur(10px);
-    /* Transition is kept for colors, but transform is managed by JS for magnetic effect */
     transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
   }
   .chip:hover {
@@ -467,19 +521,28 @@
   .cursor-glow {
     position: fixed; width: 300px; height: 300px;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
-    border-radius: 50%; pointer-events: none; z-index: 9999; /* Ensure it stays on top but passes events */
+    border-radius: 50%; pointer-events: none; z-index: 9999;
     transform: translate(-50%, -50%); 
     transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
     mix-blend-mode: screen;
+  }
+
+  @media (max-width: 992px) {
+    .hero-inner { flex-direction: column-reverse; text-align: center; gap: 2rem; }
+    .hero-text { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .hero-visual { margin-bottom: 1rem; transform: translateX(0) scale(0.9); }
+    .stats-grid { justify-content: center; }
+    .social-links { justify-content: center; }
   }
 
   @media (max-width: 768px) {
     .nav-links { display: none; }
     .title { font-size: 2.5rem; }
     section { padding: 4rem 0; }
-    .exp-card, .project-card { transform: none !important; } /* Disable 3D tilt on mobile */
+    .exp-card, .project-card { transform: none !important; }
     .edu-card { flex-direction: column; text-align: center; gap: 1rem; }
     .cursor-glow { display: none; }
+    .image-wrapper { width: 300px; height: 300px; }
   }
 </style>
 </head>
@@ -511,43 +574,56 @@
   <!-- Hero Section -->
   <main class="container">
     <section class="hero">
-      <div class="eyebrow">Available for opportunities</div>
-      <h1 class="title">Sankara <br/> <span class="gradient-text">Subramanian P</span></h1>
-      <h2 class="subtitle">Full Stack Java Developer · <span>3 Years Experience</span></h2>
-      <p class="description">
-        Building scalable backend systems and responsive frontends for government and enterprise clients.
-        Specialised in Java Spring Boot, Microservices, and real-time data pipelines — shipping production-grade
-        software that handles thousands of concurrent users.
-      </p>
-      
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-num"><span class="count" data-target="3">0</span><span>+</span></div>
-          <div class="stat-label">Years Exp</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num"><span class="count" data-target="5">0</span><span>+</span></div>
-          <div class="stat-label">Projects</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num"><span class="count" data-target="20">0</span><span>%</span></div>
-          <div class="stat-label">Uptime Boost</div>
-        </div>
-      </div>
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="eyebrow">Available for opportunities</div>
+          <h1 class="title">Sankara <br/> <span class="gradient-text">Subramanian P</span></h1>
+          <h2 class="subtitle">Full Stack Java Developer · <span>3 Years Experience</span></h2>
+          <p class="description">
+            Building scalable backend systems and responsive frontends for government and enterprise clients.
+            Specialised in Java Spring Boot, Microservices, and real-time data pipelines — shipping production-grade
+            software that handles thousands of concurrent users.
+          </p>
+          
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-num"><span class="count" data-target="3">0</span><span>+</span></div>
+              <div class="stat-label">Years Exp</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num"><span class="count" data-target="5">0</span><span>+</span></div>
+              <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num"><span class="count" data-target="20">0</span><span>%</span></div>
+              <div class="stat-label">Uptime Boost</div>
+            </div>
+          </div>
 
-      <div class="social-links">
-        <a href="tel:+918838598168" class="chip magnetic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.22 1.18 2 2 0 012.18 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.06-1.06a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-          +91 88385 98168
-        </a>
-        <a href="mailto:madhavmaddy619@gmail.com" class="chip magnetic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          madhavmaddy619@gmail.com
-        </a>
-        <a href="https://linkedin.com/in/sankara-subramanian-87b9a8329" target="_blank" class="chip magnetic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-          LinkedIn
-        </a>
+          <div class="social-links">
+            <!-- Github Link Added -->
+            <a href="https://github.com/shankarbonton" target="_blank" class="chip magnetic">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+              GitHub
+            </a>
+            <a href="https://linkedin.com/in/sankara-subramanian-87b9a8329" target="_blank" class="chip magnetic">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              LinkedIn
+            </a>
+            <a href="mailto:madhavmaddy619@gmail.com" class="chip magnetic">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Email Me
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="image-wrapper">
+            <!-- Ensure your photo is saved as 'profile.jpeg' in the same folder as this index.html file -->
+            <img src="profile.jpeg" alt="Sankara Subramanian P" class="profile-img"/>
+            <div class="image-glow"></div>
+          </div>
+        </div>
       </div>
     </section>
 
